@@ -1,25 +1,32 @@
-name: Deploy website
+ name: Deploy website
+
 on:
   push:
     branches:
       - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Caching 
+
+      - name: Caching
         uses: actions/cache@v3
         with:
-           path: ~/.npm
-           key: node-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
+          key: node-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
+
       - name: Lint code
         run: npm run lint
+
       - name: Test code
         run: npm run test
+
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -27,24 +34,30 @@ jobs:
       build-path: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Get code
-        uses: actions/checkout@v3 
-      - name: Caching 
+        uses: actions/checkout@v3
+
+      - name: Caching
         uses: actions/cache@v3
         with:
-           path: ~/.npm
-           key: node-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
+          key: node-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build website
         run: npm run build
-      - name: Javascript file name 
+
+      - name: Javascript file name
         id: publish
-        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+        run: find dist/assets/*.js -type f -execdir echo "script-file={}" >> $GITHUB_OUTPUT ';'
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-files 
-          path: dist 
+          name: dist-files
+          path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -53,7 +66,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-files
-      - name: Output Filename 
-        run: echo "Build path: ${{needs.build.outputs.build-path}}"
+
+      - name: Output Filename
+        run: echo "Build path: ${{ needs.build.outputs.build-path }}"
+
       - name: Deploy
         run: echo "Deploying..."
