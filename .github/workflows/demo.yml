@@ -50,7 +50,9 @@ jobs:
 
       - name: Javascript file name
         id: publish
-        run: find dist/assets/*.js -type f -execdir echo "script-file={}" >> $GITHUB_OUTPUT ';'
+        run: |
+          find dist/assets/*.js -type f \
+            -execdir echo "script-file={}" >> $GITHUB_OUTPUT \;
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -72,4 +74,3 @@ jobs:
 
       - name: Deploy
         run: echo "Deploying..."
- 
