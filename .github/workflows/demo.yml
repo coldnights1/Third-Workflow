@@ -70,7 +70,7 @@ jobs:
           name: dist-files
 
       - name: Output Filename
-        run: echo "Build path: ${{ needs.build.outputs.build-path }}"
+        run: echo "Build path ${{ needs.build.outputs.build-path }}"
 
       - name: Deploy
         run: echo "Deploying..."
